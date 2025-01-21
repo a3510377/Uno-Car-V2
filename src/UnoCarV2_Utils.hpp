@@ -1,5 +1,3 @@
-#pragma once
-
 #include "UnoCarV2_Utils.h"
 
 template <typename T>

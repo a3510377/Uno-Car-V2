@@ -114,6 +114,7 @@ ValueWatch<uint8_t> RGB::operator[](uint8_t i) {
       &data_stack);
 }
 
+// Set the RGB color values
 RGB &RGB::setRGB(uint8_t r, uint8_t g, uint8_t b) {
   _r = r;
   _g = g;
@@ -124,105 +125,15 @@ RGB &RGB::setRGB(uint8_t r, uint8_t g, uint8_t b) {
   return *this;
 }
 
+// Update the color display, triggering the callback if set
 void RGB::_update() {
   if (_onChange) {
     _onChange(*this, _userData);
   }
 }
 
+// Set the callback function to be triggered when the color changes
 void RGB::_setOnChange(void (*onChange)(RGB &, void *), void *userData) {
   _onChange = onChange;
   _userData = userData;
-}
-
-// --------------------------
-
-LEDs::LEDs(uint8_t pin, bool immediate, float brightness)
-    : _immediate(immediate), _brightness(brightness), _pin(pin) {
-  _bitMask = digitalPinToBitMask(_pin);
-  _bitNotMask = ~_bitMask;
-
-  _port = digitalPinToPort(pin);
-  _reg = portModeRegister(_port);
-  _out = portOutputRegister(_port);
-
-  uint8_t oldSREG = SREG;
-  cli();
-  // set pin as output
-  *_reg |= _bitMask;
-  // set pin low
-  *_out &= _bitNotMask;
-  SREG = oldSREG;
-
-  for (int i = 0; i < 2; i++) {
-    _rgb[i] = RGB(0, 0, 0);
-    _rgb[i]._setOnChange(
-        [](RGB &rgb, void *userData) {
-          LEDs *instance = static_cast<LEDs *>(userData);
-          if (instance->_immediate) {
-            instance->show();
-          }
-        },
-        this);
-  }
-}
-
-LEDs::~LEDs() {
-  uint8_t oldSREG = SREG;
-  cli();
-  // set pin as input
-  *_reg &= _bitNotMask;
-  SREG = oldSREG;
-}
-
-void LEDs::show() const {
-  uint8_t oldSREG = SREG;
-  cli();
-  for (int i = 0; i < 2; i++) {
-    RGB rgb = _rgb[i];
-    uint8_t r = static_cast<uint8_t>(rgb._r * _brightness),
-            g = static_cast<uint8_t>(rgb._g * _brightness),
-            b = static_cast<uint8_t>(rgb._b * _brightness);
-
-    _sendPixel(r, g, b);
-  }
-  SREG = oldSREG;
-
-  // >= 280 us
-  delayMicroseconds(280);
-}
-
-void LEDs::clear() {
-  uint8_t oldSREG = SREG;
-  cli();
-
-  bool old = _immediate;
-  _immediate = false;
-  for (int i = 0; i < 2; i++) {
-    _rgb[i] = RGB(0, 0, 0);
-  }
-  _immediate = old;
-  show();
-
-  SREG = oldSREG;
-}
-
-void LEDs::setImmediate(bool immediate) {
-  _immediate = immediate;
-}
-
-void LEDs::setBrightness(uint8_t brightness) {
-  _brightness = constrain(brightness, 0, 255) / 255.0f;
-
-  if (_immediate) {
-    show();
-  }
-}
-
-void LEDs::setBrightness(float brightness) {
-  _brightness = constrain(brightness, 0.0f, 1.0f);
-
-  if (_immediate) {
-    show();
-  }
 }

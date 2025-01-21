@@ -15,6 +15,9 @@ bool MCP23008::begin(bool pullup) {
     return false;
   }
 
+  // clear interrupt
+  getCapturedInterrupt();
+
   // set all pins as input
   if (!_writeReg(MCP23x08_REG_IODIR, 0xff)) {
     _lastError = MCP23008_ERROR_WRITE_IODIR;
