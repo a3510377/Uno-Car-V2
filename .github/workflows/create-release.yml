@@ -1,0 +1,39 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - v*.*.*
+
+permissions:
+  contents: write
+  discussions: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check package version matches tag
+        run: |
+          apt-get update && apt-get install jq -y
+
+          tagVersion=${{ github.ref_name }}
+          pioLibVersion=$(jq -r '.version | "v" + .' library.json)
+          arduinoLibVersion=$(sed -n 's/^version=/v/p' library.properties)
+
+          if [[ "$tagVersion" != "$pioLibVersion" ]] || [[ "$tagVersion" != "$arduinoLibVersion" ]]; then
+            echo "Error: tagVersion does not match pioLibVersion or arduinoLibVersion."
+            echo "tagVersion: $tagVersion"
+            echo "pioLibVersion: $pioLibVersion"
+            echo "arduinoLibVersion: $arduinoLibVersion"
+            exit 1
+          else
+            echo "Versions match."
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2

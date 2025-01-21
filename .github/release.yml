@@ -1,0 +1,26 @@
+# https://docs.github.com/en/repositories/releasing-projects-on-github/automatically-generated-release-notes#example-configuration
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - dependabot
+  categories:
+    - title: 🛠 Breaking Changes
+      labels:
+        - breaking-change
+    - title: 🎉 Exciting New Features
+      labels:
+        - feature
+    - title: Fixed
+      labels:
+        - fix-bug
+    - title: Documentation
+      labels:
+        - docs
+    - title: 👒 Dependencies
+      labels:
+        - dependencies
+    - title: Other Changes
+      labels:
+        - '*'
