@@ -16,6 +16,25 @@
 #define MCP23x08_REG_GPIO 0x09     // General Purpose IO  [0] 1:high 0:low
 #define MCP23x08_REG_OLAT 0x0A     // output latch        [0] 1:high 0:low
 
+enum MCP23008_Error {
+  MCP23008_OK = 0,
+  MCP23008_ERROR_CONNECTION,
+  MCP23008_ERROR_WRITE_IODIR,
+  MCP23008_ERROR_WRITE_GPIO,
+  MCP23008_ERROR_WRITE_GPPU,
+  MCP23008_ERROR_INVALID_PIN,
+  MCP23008_ERROR_COMMUNICATION,
+  MCP23008_ERROR_INVALID_PIN_MODE,
+  MCP23008_ERROR_WRITE_GPPU_PIN,
+  MCP23008_ERROR_WRITE_IODIR_PIN,
+  MCP23008_ERROR_ATTACH_INTERRUPT_INVALID_PIN,
+  MCP23008_ERROR_READ_INTERRUPT,
+  MCP23008_ERROR_DETACH_INTERRUPT_INVALID_PIN,
+  MCP23008_ERROR_NO_INTERRUPT,
+  MCP23008_ERROR_REGISTER_READ_FAILED,
+  MCP23008_ERROR_WRITE_FAILED
+};
+
 class MCP23008 {
  public:
   MCP23008(uint8_t address, TwoWire* wire = &Wire)
@@ -29,7 +48,8 @@ class MCP23008 {
   bool digitalWrite(uint8_t pin, uint8_t value);
   uint8_t digitalRead(uint8_t pin);
 
-  bool setInterrupts(bool mirroring, bool openDrain, uint8_t polarity);
+  bool setIOConfig(bool seqop, bool disableSdaSlewRate, bool openDrain,
+                   bool intPolarity);
   bool attachInterrupt(uint8_t pin, uint8_t mode);
   bool detachInterrupt();
   bool detachInterrupt(uint8_t pin);
@@ -48,6 +68,8 @@ class MCP23008 {
  private:
   uint8_t _address;
   TwoWire* _wire;
+
+  MCP23008_Error _lastError = MCP23008_OK;
 
   uint8_t _readReg(uint8_t reg);
   bool _writeReg(uint8_t reg, uint8_t value);

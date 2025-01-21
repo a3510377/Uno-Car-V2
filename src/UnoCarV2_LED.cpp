@@ -138,7 +138,7 @@ void RGB::_setOnChange(void (*onChange)(RGB &, void *), void *userData) {
 // --------------------------
 
 LEDs::LEDs(uint8_t pin, bool immediate, float brightness)
-    : _pin(pin), _immediate(immediate), _brightness(brightness) {
+    : _immediate(immediate), _brightness(brightness), _pin(pin) {
   _bitMask = digitalPinToBitMask(_pin);
   _bitNotMask = ~_bitMask;
 
