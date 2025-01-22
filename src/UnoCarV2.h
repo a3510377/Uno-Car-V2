@@ -10,6 +10,9 @@
 #define E0_PIN (NUM_DIGITAL_PINS + 1)
 #define P0_PIN (E0_PIN + 8)
 
+#define digitalPinIsArduino(P) ((P) < E0_PIN)
+#define digitalPinIsMCP23008(P) ((P) >= E0_PIN && (P) < P0_PIN)
+#define digitalPinIsPCA9685(P) ((P) >= P0_PIN)
 #define digitalPinToModule(P) \
   ((P) < E0_PIN ? ArduinoPin : (P) < P0_PIN ? MCP23008Pin : PCA9685Pin)
 
@@ -76,6 +79,9 @@ enum UnoCarV2Pins {
   D53,
 #endif
 
+  // Arduino analog pins skipped (arduino is defined)
+  // ...
+
   // MCP23008 pins
   E0 = E0_PIN,
   E1,
@@ -94,7 +100,15 @@ enum UnoCarV2Pins {
   P4,
   P5,
   P6,
-  P7
+  P7,
+  P8,
+  P9,
+  P10,
+  P11,
+  P12,
+  P13,
+  P14,
+  P15
 };
 
 class UnoCarV2 {

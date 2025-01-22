@@ -17,6 +17,8 @@ bool MCP23008::begin(bool pullup) {
 
   // clear interrupt
   getCapturedInterrupt();
+  // setup default IO config
+  setIOConfig(false, false, false, false);
 
   // set all pins as input
   if (!_writeReg(MCP23x08_REG_IODIR, 0xff)) {
