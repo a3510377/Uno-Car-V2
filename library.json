@@ -1,0 +1,20 @@
+{
+  "$schema": "https://raw.githubusercontent.com/platformio/platformio-core/develop/platformio/assets/schema/library.json",
+  "name": "UnoCarV2",
+  "version": "0.1.0",
+  "description": "A library for controlling the car with Arduino Uno V2, super ArduinoUnoCar-V2 Control the car library for Arduino Uno, Mega 2560",
+  "keywords": ["ArduinoUno", "UnoCarV2", "Arduino"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/a3510377/UnoCarV2"
+  },
+  "authors": [
+    {
+      "name": "a3510377",
+      "email": "a102009102009@gmail.com",
+      "url": "https://github.com/a3510377"
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "*"
+}
