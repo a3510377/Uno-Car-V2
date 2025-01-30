@@ -19,7 +19,7 @@ LEDs<size>::LEDs(uint8_t pin, bool immediate, float brightness)
   SREG = oldSREG;
 
   for (int i = 0; i < size; i++) {
-    _rgb[i] = RGB(0, 0, 0);
+    _rgb[i] = RGB::Black;
     _rgb[i]._setOnChange(
         [](RGB &rgb, void *userData) {
           LEDs *instance = static_cast<LEDs *>(userData);
@@ -62,6 +62,8 @@ void LEDs<size>::show() const {
 // Clear the LED display
 template <uint8_t size>
 void LEDs<size>::clear() noexcept {
+  setAll(RGB::Black);
+}
   uint8_t oldSREG = SREG;
   cli();
 
@@ -74,6 +76,10 @@ void LEDs<size>::clear() noexcept {
   show();
 
   SREG = oldSREG;
+}
+
+void LEDs<size>::setAll(uint8_t r, uint8_t g, uint8_t b) noexcept {
+  setAll(RGB(r, g, b));
 }
 
 // Set whether to display colors immediately
