@@ -102,6 +102,8 @@ class LEDs {
 
   void show() const;
   void clear() noexcept;
+  void setAll(RGB rgb) noexcept;
+  void setAll(uint8_t r, uint8_t g, uint8_t b) noexcept;
   void setImmediate(bool immediate);
   void setBrightness(float brightness) noexcept;
   void setBrightness(uint8_t brightness) noexcept;

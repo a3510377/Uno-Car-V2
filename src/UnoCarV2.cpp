@@ -3,6 +3,8 @@
 UnoCarV2::UnoCarV2() : leds(WS_LED_LEN), mcp23008(MCP23008_ADDRESS) {}
 
 void UnoCarV2::begin() {
+  Serial.begin(115200);
+
   ledBegin();
   mcp23008Begin();
 }
@@ -19,8 +21,8 @@ void UnoCarV2::mcp23008Begin() {
   mcp23008.attachInterrupt(0, CHANGE);
   mcp23008.attachInterrupt(1, CHANGE);
 
-  attachInterrupt(MCP23008_INTERRUPT_NUMBER, UnoCarV2::_handleInterrupt,
-                  CHANGE);
+  // attachInterrupt(MCP23008_INTERRUPT_NUMBER, UnoCarV2::_handleInterrupt,
+  //                 CHANGE);
 }
 
 void UnoCarV2::pinMode(uint8_t pin, uint8_t mode) {
