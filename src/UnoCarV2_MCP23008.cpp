@@ -22,18 +22,15 @@ bool MCP23008::begin(bool pullup) {
 
   // set all pins as input
   if (!_writeReg(MCP23x08_REG_IODIR, 0xff)) {
-    _lastError = MCP23008_ERROR_WRITE_IODIR;
     return false;
   }
   // set all pins to low
   if (!_writeReg(MCP23x08_REG_GPIO, 0x00)) {
-    _lastError = MCP23008_ERROR_WRITE_GPIO;
     return false;
   }
 
   // Configure pull-up resistors
   if (!_writeReg(MCP23x08_REG_GPPU, pullup ? 0xff : 0x00)) {
-    _lastError = MCP23008_ERROR_WRITE_GPPU;
     return false;
   }
 
@@ -322,7 +319,12 @@ bool MCP23008::writeGPIO(uint8_t value, uint8_t pinMask) {
  */
 uint8_t MCP23008::_readReg(uint8_t reg) {
   _wire->beginTransmission(_address);
+
+#if ARDUINO >= 100
   _wire->write(reg);
+#else
+  _wire->send(reg);
+#endif
 
   if (_wire->endTransmission() != 0) {
     _lastError = MCP23008_ERROR_REGISTER_READ_FAILED;
@@ -335,7 +337,12 @@ uint8_t MCP23008::_readReg(uint8_t reg) {
   }
 
   _lastError = MCP23008_OK;
+
+#if ARDUINO >= 180
   return _wire->read();
+#else
+  return _wire->receive();
+#endif
 }
 
 /**
@@ -346,8 +353,14 @@ uint8_t MCP23008::_readReg(uint8_t reg) {
  */
 bool MCP23008::_writeReg(uint8_t reg, uint8_t value) {
   _wire->beginTransmission(_address);
+
+#if ARDUINO >= 100
   _wire->write(reg);
   _wire->write(value);
+#else
+  _wire->send(reg);
+  _wire->send(value);
+#endif
 
   if (_wire->endTransmission() != 0) {
     _lastError = MCP23008_ERROR_WRITE_FAILED;
