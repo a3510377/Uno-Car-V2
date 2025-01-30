@@ -64,13 +64,16 @@ template <uint8_t size>
 void LEDs<size>::clear() noexcept {
   setAll(RGB::Black);
 }
+
+template <uint8_t size>
+void LEDs<size>::setAll(RGB rgb) noexcept {
   uint8_t oldSREG = SREG;
   cli();
 
   bool old = _immediate;
   _immediate = false;
   for (int i = 0; i < size; i++) {
-    _rgb[i] = RGB(0, 0, 0);
+    _rgb[i] = rgb;
   }
   _immediate = old;
   show();
@@ -78,6 +81,7 @@ void LEDs<size>::clear() noexcept {
   SREG = oldSREG;
 }
 
+template <uint8_t size>
 void LEDs<size>::setAll(uint8_t r, uint8_t g, uint8_t b) noexcept {
   setAll(RGB(r, g, b));
 }
