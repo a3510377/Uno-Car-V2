@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <Wire.h>
 
+#include "UnoCarV2_I2C.h"
+
 // Registers                          description     default value
 #define MCP23x08_REG_IODIR 0x00    // direction           [1] 1:input, 0:output
 #define MCP23x08_REG_IPOL 0x01     // input polarity      [0] 1:inv    0:not inv
@@ -24,13 +26,12 @@ enum MCP23008_Error {
   MCP23008_ERROR_WRITE_FAILED
 };
 
-class MCP23008 {
+class MCP23008: public UnoCarV2_I2C {
  public:
-  MCP23008(uint8_t address, TwoWire* wire = &Wire)
-      : _address(address), _wire(wire) {}
+  MCP23008(uint8_t address, TwoWire *wire = &Wire)
+      : UnoCarV2_I2C(address, wire) {};
 
   bool begin(bool pullup = false);
-  bool connected();
   bool pinMode(uint8_t mode);
   bool pinMode(uint8_t pin, uint8_t mode);
   bool setMode(uint8_t pinMask, uint8_t mode);
@@ -49,17 +50,4 @@ class MCP23008 {
 
   uint8_t readGPIO();
   bool writeGPIO(uint8_t value, uint8_t pinMask);
-
-  inline uint8_t getAddress() const {
-    return _address;
-  }
-
- private:
-  uint8_t _address;
-  TwoWire* _wire;
-
-  MCP23008_Error _lastError = MCP23008_OK;
-
-  uint8_t _readReg(uint8_t reg);
-  bool _writeReg(uint8_t reg, uint8_t value);
 };
