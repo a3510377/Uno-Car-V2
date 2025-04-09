@@ -10,11 +10,6 @@
 bool MCP23008::begin(bool pullup) {
   UnoCarV2_I2C::begin();
 
-  if (!connected()) {
-    // last error is already set
-    return false;
-  }
-
   // clear interrupt
   getCapturedInterrupt();
   // setup default IO config
@@ -54,7 +49,6 @@ bool MCP23008::pinMode(uint8_t mode) {
  */
 bool MCP23008::pinMode(uint8_t pin, uint8_t mode) {
   if (pin > 7) {
-    _lastError = MCP23008_ERROR_INVALID_PIN;
     return false;
   }
 
@@ -69,10 +63,10 @@ bool MCP23008::pinMode(uint8_t pin, uint8_t mode) {
  */
 bool MCP23008::setMode(uint8_t pinMask, uint8_t mode) {
   uint8_t reg = readReg(MCP23x08_REG_IODIR);
-  if (_lastError != MCP23008_OK) return false;
+  if (_lastError != UnoCarV2_I2C_NO_ERROR) return false;
 
   uint8_t pullUp = readReg(MCP23x08_REG_GPPU);
-  if (_lastError != MCP23008_OK) return false;
+  if (_lastError != UnoCarV2_I2C_NO_ERROR) return false;
 
   if (mode == INPUT) {
     reg |= pinMask;
@@ -99,7 +93,6 @@ bool MCP23008::setMode(uint8_t pinMask, uint8_t mode) {
  */
 bool MCP23008::digitalWrite(uint8_t pin, uint8_t value) {
   if (pin > 7) {
-    _lastError = MCP23008_ERROR_INVALID_PIN;
     return false;
   }
 
@@ -113,7 +106,6 @@ bool MCP23008::digitalWrite(uint8_t pin, uint8_t value) {
  */
 uint8_t MCP23008::digitalRead(uint8_t pin) {
   if (pin > 7) {
-    _lastError = MCP23008_ERROR_INVALID_PIN;
     return false;
   }
 
@@ -139,7 +131,7 @@ uint8_t MCP23008::digitalRead(uint8_t pin) {
 bool MCP23008::setIOConfig(bool seqop, bool disableSdaSlewRate, bool openDrain,
                            bool intPolarity) {
   uint8_t reg = readReg(MCP23x08_REG_IOCON);
-  if (_lastError != MCP23008_OK) return false;
+  if (_lastError != UnoCarV2_I2C_NO_ERROR) return false;
 
   if (seqop) reg |= 0x20;  // SEQOP: Disable sequential operation
   else reg &= ~0x20;
@@ -168,13 +160,13 @@ bool MCP23008::attachInterrupt(uint8_t pin, uint8_t mode) {
 
   uint8_t mask = 1 << pin;
   uint8_t gpinten = readReg(MCP23x08_REG_GPINTEN);
-  if (_lastError != MCP23008_OK) return false;
+  if (_lastError != UnoCarV2_I2C_NO_ERROR) return false;
 
   uint8_t defval = readReg(MCP23x08_REG_DEFVAL);
-  if (_lastError != MCP23008_OK) return false;
+  if (_lastError != UnoCarV2_I2C_NO_ERROR) return false;
 
   uint8_t intcon = readReg(MCP23x08_REG_INTCON);
-  if (_lastError != MCP23008_OK) return false;
+  if (_lastError != UnoCarV2_I2C_NO_ERROR) return false;
 
   gpinten |= mask;  // enabled interrupts
 
@@ -196,7 +188,7 @@ bool MCP23008::attachInterrupt(uint8_t pin, uint8_t mode) {
  */
 bool MCP23008::detachInterrupt() {
   uint8_t gpinten = readReg(MCP23x08_REG_GPINTEN);
-  if (_lastError != MCP23008_OK) return false;
+  if (_lastError != UnoCarV2_I2C_NO_ERROR) return false;
 
   return writeReg(MCP23x08_REG_GPINTEN, gpinten & ~0xff);
 }
@@ -209,12 +201,11 @@ bool MCP23008::detachInterrupt() {
  */
 bool MCP23008::detachInterrupt(uint8_t pin) {
   if (pin > 7) {
-    _lastError = MCP23008_ERROR_INVALID_PIN;
     return 0;
   }
 
   uint8_t gpinten = readReg(MCP23x08_REG_GPINTEN);
-  if (_lastError != MCP23008_OK) return false;
+  if (_lastError != UnoCarV2_I2C_NO_ERROR) return false;
 
   uint8_t mask = 1 << pin;
   return writeReg(MCP23x08_REG_GPINTEN, gpinten & ~mask);
@@ -256,7 +247,6 @@ uint8_t MCP23008::getCapturedInterrupt() {
  */
 uint8_t MCP23008::getMode(uint8_t pin) {
   if (pin > 7) {
-    _lastError = MCP23008_ERROR_INVALID_PIN;
     return 0;
   }
 

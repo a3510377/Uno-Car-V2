@@ -4,11 +4,13 @@
 
 #include "UnoCarV2_LED.h"
 #include "UnoCarV2_MCP23008.h"
+#include "UnoCarV2_PCA9685.h"
 #include "UnoCarV2_Utils.h"
 #include "UnoCarV2_def.h"
 
 #define E0_PIN (NUM_DIGITAL_PINS + 1)
 #define P0_PIN (E0_PIN + 8)
+#define PM_PIN (P0_PIN + 8)
 
 #define digitalPinIsArduino(P) ((P) < E0_PIN)
 #define digitalPinIsMCP23008(P) ((P) >= E0_PIN && (P) < P0_PIN)
@@ -117,6 +119,7 @@ class UnoCarV2 {
   void begin();
 
   void ledBegin();
+  void pca9685Begin();
   void mcp23008Begin();
 
   void pinMode(uint8_t pin, uint8_t mode);
@@ -126,6 +129,7 @@ class UnoCarV2 {
   uint8_t getMode(uint8_t pin);
 
   LEDs<WS_LED_LEN> leds;
+  PCA9685 pca9685;
   MCP23008 mcp23008;
 
  private:

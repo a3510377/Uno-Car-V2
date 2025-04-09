@@ -18,17 +18,9 @@
 #define MCP23x08_REG_GPIO 0x09     // General Purpose IO  [0] 1:high 0:low
 #define MCP23x08_REG_OLAT 0x0A     // output latch        [0] 1:high 0:low
 
-enum MCP23008_Error {
-  MCP23008_OK = 0,
-  MCP23008_ERROR_CONNECTION,
-  MCP23008_ERROR_INVALID_PIN,
-  MCP23008_ERROR_REGISTER_READ_FAILED,
-  MCP23008_ERROR_WRITE_FAILED
-};
-
 class MCP23008: public UnoCarV2_I2C {
  public:
-  MCP23008(uint8_t address, TwoWire *wire = &Wire)
+  MCP23008(uint8_t address = 0x20, TwoWire *wire = &Wire)
       : UnoCarV2_I2C(address, wire) {};
 
   bool begin(bool pullup = false);

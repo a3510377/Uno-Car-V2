@@ -36,22 +36,6 @@ class UnoCarV2_I2C {
     return _address;
   }
 
-  inline size_t _write(uint8_t data) {
-#if ARDUINO >= 100
-    _wire->write(data);
-#else
-    _wire->send(data);
-#endif
-  }
-
-  inline size_t _write(const uint8_t *data, size_t length) {
-#if ARDUINO >= 100
-    _wire->write(data, length);
-#else
-    _wire->send(reg);
-#endif
-  }
-
   inline int _read() {
 #if ARDUINO >= 180
     return _wire->read();

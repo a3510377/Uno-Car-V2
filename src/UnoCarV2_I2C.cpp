@@ -1,5 +1,7 @@
 #include "UnoCarV2_I2C.h"
 
+#include "Arduino.h"
+
 bool UnoCarV2_I2C::begin(bool checkConnection) {
   _resetError();
 
@@ -40,12 +42,8 @@ bool UnoCarV2_I2C::connected() {
 bool UnoCarV2_I2C::write(const uint8_t *data, size_t length, bool stop) {
   _resetError();
 
-  if (!_begun && !begin(false)) {
-    return false;
-  }
-
   _wire->beginTransmission(_address);
-  if (_write(data, length) != length) {
+  if (_wire->write(data, length) != length) {
     _lastError = UnoCarV2_I2C_ERROR_WRITE_FAILED;
     return false;
   }
@@ -78,9 +76,9 @@ bool UnoCarV2_I2C::read(uint8_t *data, uint8_t length, bool stop) {
 }
 
 uint8_t UnoCarV2_I2C::readReg(uint8_t reg) {
-  uint8_t data = 0;
-  read(&data, 1, true);
-  return data;
+  uint8_t data[1] = {reg};
+  writeThenRead(data, 1, data, 1);
+  return data[0];
 }
 
 bool UnoCarV2_I2C::writeReg(uint8_t reg, uint8_t data) {
@@ -91,5 +89,6 @@ bool UnoCarV2_I2C::writeReg(uint8_t reg, uint8_t data) {
 bool UnoCarV2_I2C::writeThenRead(const uint8_t *write_data, size_t write_length,
                                  uint8_t *read_data, size_t read_length,
                                  bool stop) {
-  return write(write_data, write_length, stop) && read(read_data, read_length);
+  return write(write_data, write_length, stop);
+  // && read(read_data, read_length);
 }

@@ -1,16 +1,20 @@
 #include "UnoCarV2.h"
 
-UnoCarV2::UnoCarV2() : leds(WS_LED_LEN), mcp23008(MCP23008_ADDRESS) {}
+UnoCarV2::UnoCarV2()
+    : leds(WS_LED_LEN), pca9685(PCA9685_ADDRESS), mcp23008(MCP23008_ADDRESS) {}
 
 void UnoCarV2::begin() {
-  Serial.begin(115200);
-
   ledBegin();
+  // pca9685Begin();
   mcp23008Begin();
 }
 
 void UnoCarV2::ledBegin() {
   leds.clear();
+}
+
+void UnoCarV2::pca9685Begin() {
+  pca9685.begin();
 }
 
 void UnoCarV2::mcp23008Begin() {
@@ -26,82 +30,40 @@ void UnoCarV2::mcp23008Begin() {
 }
 
 void UnoCarV2::pinMode(uint8_t pin, uint8_t mode) {
-  switch (digitalPinToModule(pin)) {
-    case ArduinoPin: {
-      pinMode(pin, mode);
-    } break;
-    case MCP23008Pin: {
-      mcp23008.pinMode(pin, mode);
-    } break;
-    case PCA9685Pin: {
-      // TODO implement
-    } break;
-    default:
-      return;
-  }
+  if (pin < E0_PIN) pinMode(pin, mode);
+  else if (pin < P0_PIN) mcp23008.pinMode(pin - E0_PIN, mode);
 }
 
 bool UnoCarV2::analogWrite(uint8_t pin, uint8_t value) {
-  switch (digitalPinToModule(pin)) {
-    case ArduinoPin: {
-      analogWrite(pin, value);
-    } break;
-    case PCA9685Pin: {
-      // TODO implement
-    } break;
-    default:
-      return false;
+  if (pin < E0_PIN) {
+    ::analogWrite(pin, value);
+    return true;
+  } else if (pin < P0_PIN) {
+    return mcp23008.digitalWrite(pin - E0_PIN, value > 128);
+  } else if (pin < PM_PIN) {
+    return pca9685.analogWrite(pin - P0_PIN, value);
   }
-  return true;
+  return false;
 }
 
 uint8_t UnoCarV2::digitalRead(uint8_t pin) {
-  switch (digitalPinToModule(pin)) {
-    case ArduinoPin: {
-      return ::digitalRead(pin);
-    } break;
-    case MCP23008Pin: {
-      return mcp23008.digitalRead(pin);
-    } break;
-    case PCA9685Pin: {
-      // TODO implement
-    } break;
-    default:
-      return 0;
-  }
+  if (pin < E0_PIN) ::digitalRead(pin);
+  else if (pin < P0_PIN) mcp23008.digitalRead(pin);
+
   return 0;
 }
 
 void UnoCarV2::digitalWrite(uint8_t pin, uint8_t value) {
-  switch (digitalPinToModule(pin)) {
-    case ArduinoPin: {
-      ::digitalWrite(pin, value);
-    } break;
-    case MCP23008Pin: {
-      mcp23008.digitalWrite(pin, value);
-    } break;
-    case PCA9685Pin: {
-      // TODO implement
-    } break;
-    default:
-      return;
-  }
+  if (pin < E0_PIN) ::digitalWrite(pin, value);
+  else if (pin < P0_PIN) mcp23008.digitalWrite(pin, value);
+  else if (pin < PM_PIN) pca9685.analogWrite(pin - P0_PIN, value);
 }
 
 uint8_t UnoCarV2::getMode(uint8_t pin) {
-  switch (digitalPinToModule(pin)) {
-    case ArduinoPin: {
-      return getMode(pin);
-    } break;
-    case MCP23008Pin: {
-      return mcp23008.getMode(pin);
-    } break;
-    case PCA9685Pin: {
-      // TODO implement
-    } break;
-    default:
-      return 0;
-  }
+  if (pin < E0_PIN) return getMode(pin);
+  else if (pin < P0_PIN) return mcp23008.getMode(pin);
+  else if (pin < PM_PIN) return OUTPUT;
+
   return 0;
 }
 
