@@ -41,9 +41,8 @@ bool UnoCarV2_I2C::connected() {
 
 bool UnoCarV2_I2C::write(const uint8_t *data, size_t length, bool stop) {
   _resetError();
-
   _wire->beginTransmission(_address);
-  if (_wire->write(data, length) != length) {
+  if (_write(data, length) != length) {
     _lastError = UnoCarV2_I2C_ERROR_WRITE_FAILED;
     return false;
   }
@@ -89,6 +88,5 @@ bool UnoCarV2_I2C::writeReg(uint8_t reg, uint8_t data) {
 bool UnoCarV2_I2C::writeThenRead(const uint8_t *write_data, size_t write_length,
                                  uint8_t *read_data, size_t read_length,
                                  bool stop) {
-  return write(write_data, write_length, stop);
-  // && read(read_data, read_length);
+  return write(write_data, write_length, stop) && read(read_data, read_length);
 }

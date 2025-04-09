@@ -1,10 +1,10 @@
 #pragma once
 
+#include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 
 #include "UnoCarV2_LED.h"
 #include "UnoCarV2_MCP23008.h"
-#include "UnoCarV2_PCA9685.h"
 #include "UnoCarV2_Utils.h"
 #include "UnoCarV2_def.h"
 
@@ -122,6 +122,10 @@ class UnoCarV2 {
   void pca9685Begin();
   void mcp23008Begin();
 
+  bool pcaAnalogWrite(uint8_t channel, int value);
+  bool pcaAnalogWrite(uint8_t channel, float percent);
+  bool pcaAnalogWrite(uint8_t channel, uint16_t pwmVal);
+
   void pinMode(uint8_t pin, uint8_t mode);
   bool analogWrite(uint8_t pin, uint8_t value);
   uint8_t digitalRead(uint8_t pin);
@@ -129,14 +133,14 @@ class UnoCarV2 {
   uint8_t getMode(uint8_t pin);
 
   LEDs<WS_LED_LEN> leds;
-  PCA9685 pca9685;
+  Adafruit_PWMServoDriver pca9685;
   MCP23008 mcp23008;
 
- private:
-  static void _handleInterrupt() {
-    _interruptFlag = true;
-  }
-  static bool _interruptFlag;
+  //  private:
+  //   static void _handleInterrupt() {
+  //     _interruptFlag = true;
+  //   }
+  //   static bool _interruptFlag;
 };
 
 extern UnoCarV2 unoCarV2;
