@@ -12,7 +12,9 @@
 class UnoCarV2_I2C {
  public:
   UnoCarV2_I2C(uint8_t address, TwoWire *wire = &Wire)
-      : _address(address), _lastError(UnoCarV2_I2C_NO_ERROR) {};
+      : _address(address), _lastError(UnoCarV2_I2C_NO_ERROR) {
+    _wire = wire;
+  };
 
   bool begin(bool checkConnection = true);
   void end();

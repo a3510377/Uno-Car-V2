@@ -10,7 +10,7 @@
 
 #define E0_PIN (NUM_DIGITAL_PINS + 1)
 #define P0_PIN (E0_PIN + 8)
-#define PM_PIN (P0_PIN + 8)
+#define PM_PIN (P0_PIN + 16)
 
 #define digitalPinIsArduino(P) ((P) < E0_PIN)
 #define digitalPinIsMCP23008(P) ((P) >= E0_PIN && (P) < P0_PIN)
@@ -122,8 +122,8 @@ class UnoCarV2 {
   void pca9685Begin();
   void mcp23008Begin();
 
-  bool pcaAnalogWrite(uint8_t channel, int value);
   bool pcaAnalogWrite(uint8_t channel, float percent);
+  bool pcaAnalogWrite(uint8_t channel, uint8_t value);
   bool pcaAnalogWrite(uint8_t channel, uint16_t pwmVal);
 
   void pinMode(uint8_t pin, uint8_t mode);
