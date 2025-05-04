@@ -65,7 +65,7 @@ bool UnoCarV2::pcaAnalogWrite(uint8_t channel, uint16_t pwmVal) {
 }
 
 void UnoCarV2::pinMode(uint8_t pin, uint8_t mode) {
-  if (pin < E0_PIN) pinMode(pin, mode);
+  if (pin < E0_PIN) ::pinMode(pin, mode);
   else if (pin < P0_PIN) mcp23008.pinMode(pin - E0_PIN, mode);
 }
 
