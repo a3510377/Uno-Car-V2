@@ -92,6 +92,7 @@ jobs:
             # See: https://github.com/arduino/compile-sketches#libraries
 
             - name: Adafruit PWM Servo Driver Library
+            - source-path: ./
           sketch-paths: |
             - examples
           enable-deltas-report: true
