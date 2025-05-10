@@ -3,8 +3,10 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 
+#include "Tone.h"
 #include "UnoCarV2_LED.h"
 #include "UnoCarV2_MCP23008.h"
+#include "UnoCarV2_Motor.h"
 #include "UnoCarV2_Utils.h"
 #include "UnoCarV2_def.h"
 
@@ -113,10 +115,13 @@ enum UnoCarV2Pins {
   P15
 };
 
-class UnoCarV2 {
+class UnoCarV2: public UnoCarV2_Motor {
  public:
   UnoCarV2();
   void begin();
+
+  void noTone();
+  void tone(unsigned int frequency, unsigned long duration = 0);
 
   void ledBegin();
   void pca9685Begin();

@@ -40,25 +40,6 @@ LEDs<size>::~LEDs() {
   SREG = oldSREG;
 }
 
-// Display the current colors
-template <uint8_t size>
-void LEDs<size>::show() const {
-  uint8_t oldSREG = SREG;
-  cli();
-  for (int i = 0; i < size; i++) {
-    RGB rgb = _rgb[i];
-    uint8_t r = static_cast<uint8_t>(rgb._r * _brightness),
-            g = static_cast<uint8_t>(rgb._g * _brightness),
-            b = static_cast<uint8_t>(rgb._b * _brightness);
-
-    _sendPixel(r, g, b);
-  }
-  SREG = oldSREG;
-
-  // >= 280 us
-  delayMicroseconds(280);
-}
-
 // Clear the LED display
 template <uint8_t size>
 void LEDs<size>::clear() noexcept {
@@ -67,9 +48,6 @@ void LEDs<size>::clear() noexcept {
 
 template <uint8_t size>
 void LEDs<size>::setAll(RGB rgb) noexcept {
-  uint8_t oldSREG = SREG;
-  cli();
-
   bool old = _immediate;
   _immediate = false;
   for (int i = 0; i < size; i++) {
@@ -77,8 +55,6 @@ void LEDs<size>::setAll(RGB rgb) noexcept {
   }
   _immediate = old;
   show();
-
-  SREG = oldSREG;
 }
 
 template <uint8_t size>

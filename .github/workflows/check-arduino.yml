@@ -17,10 +17,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-# TODO wait code done
-# - name: Arduino Lint
-#   uses: arduino/arduino-lint-action@v2
-#   with:
-#     compliance: specification
-#     library-manager: update
-#     project-type: library
+
+      - name: Arduino Lint
+        uses: arduino/arduino-lint-action@v2
+        with:
+          compliance: specification
+          library-manager: submit
+          project-type: library

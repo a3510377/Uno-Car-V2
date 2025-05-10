@@ -1,41 +1,49 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 
+enum MotorChannel { M1 = 1, M2, M3, M4, M5, M6 };
+
 class UnoCarV2_Motor {
  public:
   UnoCarV2_Motor(Adafruit_PWMServoDriver pca9685) : _pca9685(pca9685) {}
 
-  bool setPWM(int channel, int32_t speed) {
-    speed = constrain(speed, -4095, 4095);
-    setPWM(channel, (uint16_t)speed);
-    return setPWM(channel, (uint16_t)speed);
-  }
+  void stopAll(void);
 
-  void setSpeed(int speed);
+  bool drive(int motorIndex, int32_t speed);
 
-  bool drive1(int speed);
-  bool stop1(int speed);
+  // clang-format off
+  inline bool stop(int motorIndex) { return drive(motorIndex, 0); }
 
-  bool drive2(int speed);
-  bool stop2(int speed);
+  inline bool drive1(int speed) { return drive(M1, speed); }
+  inline bool drive2(int speed) { return drive(M2, speed); }
+  inline bool drive3(int speed) { return drive(M3, speed); }
+  inline bool drive4(int speed) { return drive(M4, speed); }
+  inline bool drive5(int speed) { return drive(M5, speed); }
+  inline bool drive6(int speed) { return drive(M6, speed); }
 
-  bool drive3(int speed);
-  bool stop3(int speed);
+  inline bool driveA(int speed) { return drive1(speed); }
+  inline bool driveB(int speed) { return drive2(speed); }
+  inline bool driveC(int speed) { return drive3(speed); }
+  inline bool driveD(int speed) { return drive4(speed); }
+  inline bool driveE(int speed) { return drive5(speed); }
+  inline bool driveF(int speed) { return drive6(speed); }
 
-  bool drive4(int speed);
-  bool stop4(int speed);
+  inline bool stop1() { return stop(M1); }
+  inline bool stop2() { return stop(M2); }
+  inline bool stop3() { return stop(M3); }
+  inline bool stop4() { return stop(M4); }
+  inline bool stop5() { return stop(M5); }
+  inline bool stop6() { return stop(M6); }
 
-  bool drive5(int speed);
-  bool stop5(int speed);
-
-  bool drive6(int speed);
-  bool stop6(int speed);
-
-  inline void stopAll() {
-    setSpeed(0);
-  }
+  inline bool stopA() { return stop1(); }
+  inline bool stopB() { return stop2(); }
+  inline bool stopC() { return stop3(); }
+  inline bool stopD() { return stop4(); }
+  inline bool stopE() { return stop5(); }
+  inline bool stopF() { return stop6(); }
+  // clang-format on
 
  private:
   Adafruit_PWMServoDriver _pca9685;
-  bool _drive(int channel, int speed);
+  bool _setPWM(int channel, uint16_t pwm);
 };

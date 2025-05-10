@@ -7,12 +7,23 @@ static void _handleInterrupt() {
 };
 
 UnoCarV2::UnoCarV2()
-    : leds(WS_LED_LEN), pca9685(PCA9685_ADDRESS), mcp23008(MCP23008_ADDRESS) {}
+    : UnoCarV2_Motor(pca9685),
+      leds(WS_LED_PIN),
+      pca9685(PCA9685_ADDRESS),
+      mcp23008(MCP23008_ADDRESS) {}
 
 void UnoCarV2::begin() {
   ledBegin();
   pca9685Begin();
   mcp23008Begin();
+}
+
+void UnoCarV2::noTone() {
+  ::noTone(BUZZER_PIN);
+}
+
+void UnoCarV2::tone(unsigned int frequency, unsigned long duration) {
+  ::tone(BUZZER_PIN, frequency, duration);
 }
 
 void UnoCarV2::ledBegin() {

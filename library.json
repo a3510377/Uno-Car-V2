@@ -16,5 +16,10 @@
     }
   ],
   "frameworks": "arduino",
-  "platforms": "*"
+  "platforms": "*",
+  "dependencies": [
+    { "name": "Wire" },
+    { "name": "Adafruit BusIO" },
+    { "name": "Adafruit PWM Servo Driver Library" }
+  ]
 }

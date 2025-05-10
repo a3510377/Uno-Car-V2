@@ -100,13 +100,37 @@ class LEDs {
   LEDs(uint8_t pin, bool immediate = true, float brightness = 0.5f);
   ~LEDs();
 
-  void show() const;
   void clear() noexcept;
   void setAll(RGB rgb) noexcept;
   void setAll(uint8_t r, uint8_t g, uint8_t b) noexcept;
   void setImmediate(bool immediate);
   void setBrightness(float brightness) noexcept;
   void setBrightness(uint8_t brightness) noexcept;
+
+  // Display the current colors
+  inline void show() const {
+    uint8_t oldSREG = SREG;
+    RGB tmp[size] = {};
+
+    for (int i = 0; i < size; i++) {
+      RGB rgb = _rgb[i];
+      uint8_t r = static_cast<uint8_t>(rgb._r * _brightness),
+              g = static_cast<uint8_t>(rgb._g * _brightness),
+              b = static_cast<uint8_t>(rgb._b * _brightness);
+
+      tmp[i] = RGB(r, g, b);
+    }
+
+    cli();
+    for (int i = 0; i < size; i++) {
+      RGB rgb = tmp[i];
+      _sendPixel(rgb._r, rgb._g, rgb._b);
+    }
+    SREG = oldSREG;
+
+    // >= 280 us
+    delayMicroseconds(300);
+  }
 
   // Get RGB at index
   inline RGB operator[](int index) const {
@@ -161,9 +185,8 @@ class LEDs {
 
   // Send a byte (8 bits) to the LED strip
   inline void _sendByte(uint8_t byte) const {
-    for (uint8_t bit = 0; bit < 8; bit++) {
-      _sendBit(bitRead(byte, 7));
-
+    for (uint8_t i = 0; i < 8; i++) {
+      _sendBit((byte & 0x80) != 0);
       byte <<= 1;
     }
   }
