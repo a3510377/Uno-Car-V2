@@ -91,8 +91,7 @@ jobs:
             # Additional library dependencies can be listed here.
             # See: https://github.com/arduino/compile-sketches#libraries
 
-            - source-url: https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library
-              name: Adafruit_PWM_Servo_Driver_Library
+            - name: Adafruit PWM Servo Driver Library
           sketch-paths: |
             - examples
           enable-deltas-report: true
