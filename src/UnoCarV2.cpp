@@ -1,15 +1,8 @@
 #include "UnoCarV2.h"
 
-static volatile bool _interruptFlag = false;
-
-static void _handleInterrupt() {
-  _interruptFlag = true;
-};
-
 UnoCarV2::UnoCarV2()
-    : UnoCarV2_Motor(pca9685),
+    : UnoCarV2_Motor(PCA9685_ADDRESS),
       leds(WS_LED_PIN),
-      pca9685(PCA9685_ADDRESS),
       mcp23008(MCP23008_ADDRESS) {}
 
 void UnoCarV2::begin() {
@@ -42,11 +35,15 @@ void UnoCarV2::mcp23008Begin() {
   mcp23008.begin(true);
 
   mcp23008.setMode(0x03, INPUT_PULLUP);  // set pin 0 and 1 as INPUT_PULLUP
-  mcp23008.setIOConfig(false, false, false, false);  // set all pins as input
+  mcp23008.setIOConfig(false, false, false, LOW);  // set all pins as input
   mcp23008.attachInterrupt(0, CHANGE);
   mcp23008.attachInterrupt(1, CHANGE);
 
-  attachInterrupt(MCP23008_INTERRUPT_NUMBER, _handleInterrupt, CHANGE);
+  /* setup interrupt */
+  // set INTR pin as input
+  pinMode(MCP23008_INTERRUPT_PIN, INPUT);
+  // watch for interrupt
+  attachInterrupt(MCP23008_INTERRUPT_NUMBER, UnoCarV2::handleInterrupt, CHANGE);
 }
 
 bool UnoCarV2::pcaAnalogWrite(uint8_t channel, float percent) {
@@ -113,6 +110,12 @@ uint8_t UnoCarV2::getMode(uint8_t pin) {
   else if (pin < PM_PIN) return OUTPUT;
 
   return 0;
+}
+
+volatile bool UnoCarV2::interruptFlag = false;
+
+void UnoCarV2::handleInterrupt() {
+  interruptFlag = true;
 }
 
 UnoCarV2 unoCarV2;

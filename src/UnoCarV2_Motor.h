@@ -5,7 +5,7 @@ enum MotorChannel { M1 = 1, M2, M3, M4, M5, M6 };
 
 class UnoCarV2_Motor {
  public:
-  UnoCarV2_Motor(Adafruit_PWMServoDriver pca9685) : _pca9685(pca9685) {}
+  UnoCarV2_Motor(uint8_t address) : pca9685(address) {}
 
   void stopAll(void);
 
@@ -43,7 +43,8 @@ class UnoCarV2_Motor {
   inline bool stopF() { return stop6(); }
   // clang-format on
 
+  Adafruit_PWMServoDriver pca9685;
+
  private:
-  Adafruit_PWMServoDriver _pca9685;
   bool _setPWM(int channel, uint16_t pwm);
 };

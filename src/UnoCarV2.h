@@ -3,10 +3,10 @@
 #include <Adafruit_PWMServoDriver.h>
 #include <Arduino.h>
 
-#include "Tone.h"
 #include "UnoCarV2_LED.h"
 #include "UnoCarV2_MCP23008.h"
 #include "UnoCarV2_Motor.h"
+#include "UnoCarV2_Tone.h"
 #include "UnoCarV2_Utils.h"
 #include "UnoCarV2_def.h"
 
@@ -138,14 +138,10 @@ class UnoCarV2: public UnoCarV2_Motor {
   uint8_t getMode(uint8_t pin);
 
   LEDs<WS_LED_LEN> leds;
-  Adafruit_PWMServoDriver pca9685;
   MCP23008 mcp23008;
 
-  //  private:
-  //   static void _handleInterrupt() {
-  //     _interruptFlag = true;
-  //   }
-  //   static bool _interruptFlag;
+  static void handleInterrupt();
+  static volatile bool interruptFlag;
 };
 
 extern UnoCarV2 unoCarV2;

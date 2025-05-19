@@ -2,7 +2,7 @@
 
 bool UnoCarV2_Motor::_setPWM(int channel, uint16_t pwm) {
   pwm = constrain(pwm, 0, 4095);
-  _pca9685.setPWM(channel, 0, pwm);
+  pca9685.setPWM(channel, 0, pwm);
   return true;
 }
 
@@ -14,7 +14,7 @@ bool UnoCarV2_Motor::drive(int motorIndex, int32_t speed) {
   uint8_t base = (motorIndex - 1) * 2;
 
   _setPWM(base, speed < 0 ? pwm : 0);
-  _setPWM(base + 1, speed > 0 ? pwm : 0);
+  _setPWM(base + 1, speed < 0 ? 0 : pwm);
 
   return true;
 }
