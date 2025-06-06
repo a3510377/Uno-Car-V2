@@ -5,7 +5,7 @@ enum MotorChannel { M1 = 1, M2, M3, M4, M5, M6 };
 
 class UnoCarV2_Motor {
  public:
-  UnoCarV2_Motor(uint8_t address) {}
+  UnoCarV2_Motor(uint8_t address);
 
   void stopAll(void);
 

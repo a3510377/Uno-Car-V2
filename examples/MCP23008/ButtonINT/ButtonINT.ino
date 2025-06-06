@@ -1,7 +1,6 @@
 #include <Arduino.h>
 #include <UnoCarV2.h>
 
-MCP23008 mcp(MCP23008_ADDRESS);
 volatile bool interruptFlag = false;
 
 void handleInterrupt();
@@ -9,12 +8,13 @@ void handleInterrupt();
 void setup() {
   Serial.begin(115200);
 
-  mcp.begin(true);  // true: set all pins as PULLUP
+  unoCarV2.begin();
 
-  mcp.setMode(0x03, INPUT_PULLUP);  // set pin 0 and 1 as input_pullup
+  unoCarV2.pinMode(E0, INPUT_PULLUP);
+  unoCarV2.pinMode(E1, INPUT_PULLUP);
 
-  mcp.attachInterrupt(0, CHANGE);  // attach interrupt to pin 0
-  mcp.attachInterrupt(1, CHANGE);  // attach interrupt to pin 1
+  unoCarV2.mcp23008.attachInterrupt(0, CHANGE);  // attach interrupt to pin 0
+  unoCarV2.mcp23008.attachInterrupt(1, CHANGE);  // attach interrupt to pin 1
 
   // set INTR pin as input
   pinMode(MCP23008_INTERRUPT_PIN, INPUT);
@@ -26,9 +26,9 @@ void setup() {
 void loop() {
   if (interruptFlag) {
     Serial.print("Interrupt detected on pin: ");
-    Serial.println(mcp.getLastInterruptPin());
+    Serial.println(unoCarV2.mcp23008.getLastInterruptPin());
     Serial.print("Pin states at time of interrupt: 0b");
-    Serial.println(mcp.getCapturedInterrupt(), 2);
+    Serial.println(unoCarV2.mcp23008.getCapturedInterrupt(), 2);
 
     interruptFlag = false;
   }
