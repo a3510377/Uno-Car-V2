@@ -96,6 +96,9 @@ enum UnoCarV2Pins {
   E6,
   E7,
 
+  BTN0 = E0,
+  BTN1 = E1,
+
   // PCA9685 pins
   P0 = P0_PIN,
   P1,

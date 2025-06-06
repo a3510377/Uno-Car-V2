@@ -9,6 +9,8 @@ void UnoCarV2::begin() {
   ledBegin();
   pca9685Begin();
   mcp23008Begin();
+
+  stopAll();
 }
 
 void UnoCarV2::noTone() {
@@ -36,14 +38,17 @@ void UnoCarV2::mcp23008Begin() {
 
   mcp23008.setMode(0x03, INPUT_PULLUP);  // set pin 0 and 1 as INPUT_PULLUP
   mcp23008.setIOConfig(false, false, false, LOW);  // set all pins as input
-  mcp23008.attachInterrupt(0, CHANGE);
-  mcp23008.attachInterrupt(1, CHANGE);
 
-  /* setup interrupt */
-  // set INTR pin as input
-  pinMode(MCP23008_INTERRUPT_PIN, INPUT);
-  // watch for interrupt
-  attachInterrupt(MCP23008_INTERRUPT_NUMBER, UnoCarV2::handleInterrupt, CHANGE);
+  // /* attach interrupt */
+  // mcp23008.attachInterrupt(0, CHANGE);
+  // mcp23008.attachInterrupt(1, CHANGE);
+
+  // /* setup interrupt */
+  // // set INTR pin as input
+  // pinMode(MCP23008_INTERRUPT_PIN, INPUT);
+  // // watch for interrupt
+  // attachInterrupt(MCP23008_INTERRUPT_NUMBER, UnoCarV2::handleInterrupt,
+  // CHANGE);
 }
 
 bool UnoCarV2::pcaAnalogWrite(uint8_t channel, float percent) {
@@ -90,26 +95,37 @@ bool UnoCarV2::analogWrite(uint8_t pin, uint8_t value) {
 }
 
 uint8_t UnoCarV2::digitalRead(uint8_t pin) {
-  if (pin < E0_PIN) ::digitalRead(pin);
-  else if (pin < P0_PIN) mcp23008.digitalRead(pin);
+  if (pin < E0_PIN) return ::digitalRead(pin);
+  else if (pin < P0_PIN) return mcp23008.digitalRead(pin - E0_PIN);
 
   return 0;
 }
 
 void UnoCarV2::digitalWrite(uint8_t pin, uint8_t value) {
   if (pin < E0_PIN) ::digitalWrite(pin, value);
-  else if (pin < P0_PIN) mcp23008.digitalWrite(pin, value);
+  else if (pin < P0_PIN) mcp23008.digitalWrite(pin - E0_PIN, value);
   else if (pin < PM_PIN) {
     pcaAnalogWrite(pin - P0_PIN, (uint8_t)(value ? 255 : 0));
   }
 }
 
 uint8_t UnoCarV2::getMode(uint8_t pin) {
-  if (pin < E0_PIN) return getMode(pin);
-  else if (pin < P0_PIN) return mcp23008.getMode(pin);
+  if (pin < E0_PIN) {
+    uint8_t bit = digitalPinToBitMask(pin);
+    uint8_t port = digitalPinToPort(pin);
+    volatile uint8_t *reg, *out;
+
+    if (port == NOT_A_PIN) return (uint8_t)-1;
+
+    reg = portModeRegister(port);
+    out = portOutputRegister(port);
+
+    if (*reg & bit) return OUTPUT;
+    return *out & bit ? INPUT_PULLUP : INPUT;
+  } else if (pin < P0_PIN) return mcp23008.getMode(pin - E0_PIN);
   else if (pin < PM_PIN) return OUTPUT;
 
-  return 0;
+  return (uint8_t)-1;
 }
 
 volatile bool UnoCarV2::interruptFlag = false;

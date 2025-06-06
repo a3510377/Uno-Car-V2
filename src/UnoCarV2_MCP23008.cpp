@@ -1,5 +1,8 @@
 #include "UnoCarV2_MCP23008.h"
 
+MCP23008::MCP23008(uint8_t address, TwoWire *wire)
+    : UnoCarV2_I2C(address, wire) {}
+
 /**
  * Initializes the MCP23008 device.
  * Sets all pins as inputs, initializes GPIO states, and configures pull-up

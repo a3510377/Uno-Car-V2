@@ -107,7 +107,14 @@ class LEDs {
   void setBrightness(float brightness) noexcept;
   void setBrightness(uint8_t brightness) noexcept;
 
-  // Display the current colors
+  /**
+   * Shows the current color of all LEDs. This function is marked as `const`
+   * because it does not modify the object, but it does disable interrupts
+   * and use the `cli()` and `sei()` functions to ensure that the LED
+   * strip is updated atomically. The function also waits for 300 us
+   * after updating the LEDs to ensure that the strip is updated
+   * correctly.
+   */
   inline void show() const {
     uint8_t oldSREG = SREG;
     RGB tmp[size] = {};

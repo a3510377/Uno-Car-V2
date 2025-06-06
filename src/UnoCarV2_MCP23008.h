@@ -20,8 +20,7 @@
 
 class MCP23008: public UnoCarV2_I2C {
  public:
-  MCP23008(uint8_t address = 0x20, TwoWire *wire = &Wire)
-      : UnoCarV2_I2C(address, wire) {};
+  MCP23008(uint8_t address = 0x20, TwoWire *wire = &Wire);
 
   bool begin(bool pullup = false);
   bool pinMode(uint8_t mode);
